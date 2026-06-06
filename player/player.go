@@ -3,8 +3,9 @@ package player
 import (
 	"runtime"
 	"strings"
-	"wordle/game"
-	"wordle/words"
+
+	"github.com/sam-bee/wordle-ml_game-engine/game"
+	"github.com/sam-bee/wordle-ml_game-engine/words"
 )
 
 type Player struct {

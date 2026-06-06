@@ -2,7 +2,8 @@ package player
 
 import (
 	"testing"
-	"wordle/words"
+
+	"github.com/sam-bee/wordle-ml_game-engine/words"
 )
 
 func TestChoosingGuess(t *testing.T) {

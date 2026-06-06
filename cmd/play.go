@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 	"io"
-	"wordle/game"
 	"wordle/player"
-	"wordle/words"
 
+	"github.com/sam-bee/wordle-ml_game-engine/game"
+	"github.com/sam-bee/wordle-ml_game-engine/words"
 	"github.com/spf13/cobra"
 )
 
