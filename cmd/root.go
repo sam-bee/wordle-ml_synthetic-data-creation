@@ -1,18 +1,15 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "wordle",
-	Short: "A Wordle player written in Go",
-	Long: `This Wordle player is written in Go.
-It has knowledge of the valid guesses and solutions for the game, from the New York Times website's Javascript.
-
-Play with "wordle play SPARE", for example.`,
+	Use:   "wordle-data",
+	Short: "Create Wordle imitation-learning datasets",
+	Long:  "Create synthetic Wordle game-state datasets for machine learning.",
 }
 
 func Execute() {
