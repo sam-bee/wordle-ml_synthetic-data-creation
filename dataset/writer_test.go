@@ -2,9 +2,12 @@ package dataset
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/sam-bee/wordle-ml_game-engine/words"
 )
 
 func TestWriteBinaryFileUsesExpectedHeaderAndRecordSize(t *testing.T) {
@@ -53,5 +56,43 @@ func assertUint32Field(t *testing.T, fields []byte, offset int, want uint32, nam
 	got := binary.LittleEndian.Uint32(fields[offset : offset+4])
 	if got != want {
 		t.Fatalf("%s = %d, want %d", name, got, want)
+	}
+}
+
+func TestMetadataOmitsVocabularyWords(t *testing.T) {
+	vocab, err := NewVocabulary(
+		[]words.Word{"AAAAA", "BBBBB"},
+		[]words.Word{"AAAAA"},
+	)
+	if err != nil {
+		t.Fatalf("new vocabulary: %v", err)
+	}
+
+	metadata := NewMetadata(
+		Split{ID: SplitTrain, SolutionIDs: []uint16{0}},
+		"wordle-train.bin",
+		nil,
+		vocab,
+		Config{TopK: FixedTopK, MaxDepth: MaxDepth, RecordsPerDepth: 5, IncludeOpening: true},
+		"hash",
+		"commit",
+		false,
+	)
+
+	data, err := json.Marshal(metadata)
+	if err != nil {
+		t.Fatalf("marshal metadata: %v", err)
+	}
+
+	var fields map[string]any
+	if err := json.Unmarshal(data, &fields); err != nil {
+		t.Fatalf("unmarshal metadata: %v", err)
+	}
+
+	if _, exists := fields["guess_words"]; exists {
+		t.Fatal("metadata contains guess_words")
+	}
+	if _, exists := fields["solution_words"]; exists {
+		t.Fatal("metadata contains solution_words")
 	}
 }

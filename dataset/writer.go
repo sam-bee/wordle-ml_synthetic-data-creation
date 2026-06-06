@@ -138,8 +138,6 @@ type Metadata struct {
 	GuessIDConvention         string   `json:"guess_id_convention"`
 	SolutionIDConvention      string   `json:"solution_id_convention"`
 	FeedbackConvention        string   `json:"feedback_convention"`
-	GuessWords                []string `json:"guess_words"`
-	SolutionWords             []string `json:"solution_words"`
 }
 
 func NewMetadata(split Split, binaryPath string, records []Record, vocab *Vocabulary, config Config, wordlistHash string, generatorCommit string, workingTreeDirty bool) Metadata {
@@ -175,11 +173,9 @@ func NewMetadata(split Split, binaryPath string, records []Record, vocab *Vocabu
 		Seed:                      config.Seed,
 		TeacherName:               "worst_case_shortlist_reduction",
 		ScoreMeaning:              "Per-state worst-case shortlist reduction ratio. Higher is better. Not globally comparable across states.",
-		GuessIDConvention:         "zero-based index in guess_words; 65535 pads unused slots",
-		SolutionIDConvention:      "zero-based index in solution_words; 65535 marks the global opening-state record",
+		GuessIDConvention:         "zero-based index in the external valid-guesses CSV; 65535 pads unused slots",
+		SolutionIDConvention:      "zero-based index in the external valid-solutions CSV; 65535 marks the global opening-state record",
 		FeedbackConvention:        "0 grey/absent, 1 yellow/present wrong position, 2 green/correct position, 255 pads unused feedback slots",
-		GuessWords:                vocab.GuessWords(),
-		SolutionWords:             vocab.SolutionWords(),
 	}
 }
 

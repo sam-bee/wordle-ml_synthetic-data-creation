@@ -80,19 +80,3 @@ func (v *Vocabulary) SolutionGuessID(solutionID uint16) uint16 {
 func (v *Vocabulary) GuessSolutionID(guessID uint16) int {
 	return v.guessSolutionIDs[guessID]
 }
-
-func (v *Vocabulary) GuessWords() []string {
-	guessWords := make([]string, len(v.Guesses))
-	for i, word := range v.Guesses {
-		guessWords[i] = string(word)
-	}
-	return guessWords
-}
-
-func (v *Vocabulary) SolutionWords() []string {
-	solutionWords := make([]string, len(v.Solutions))
-	for i, word := range v.Solutions {
-		solutionWords[i] = string(word)
-	}
-	return solutionWords
-}
