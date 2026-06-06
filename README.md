@@ -13,5 +13,11 @@ Generate the dataset with:
 go run . generate
 ```
 
-The `data/` directory is ignored by git while the dataset format and generation
-approach are being developed.
+Convert a binary dataset file to human-readable JSON with:
+
+```text
+go run . human-readable data/wordle-test.bin
+```
+
+Readable JSON output is written under `data/human-readable/`, which is ignored
+by git.
