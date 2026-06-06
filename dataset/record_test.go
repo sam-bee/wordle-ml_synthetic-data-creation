@@ -1,35 +1,51 @@
 package dataset
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/sam-bee/wordle-ml_game-engine/words"
+)
 
 func TestNewRecordPadsUnusedHistoryAndLabels(t *testing.T) {
+	vocab, err := NewVocabulary(
+		[]words.Word{"AAAAA", "BBBBB", "CCCCC", "DDDDD", "EEEEE"},
+		[]words.Word{"AAAAA", "BBBBB", "CCCCC"},
+	)
+	if err != nil {
+		t.Fatalf("new vocabulary: %v", err)
+	}
+
 	record, err := NewRecord(
-		7,
-		[]Turn{{GuessID: 3, FeedbackCode: 5}},
+		vocab,
+		2,
+		[]Turn{{GuessID: 1, FeedbackCode: 5}},
 		[]uint16{7, 8},
-		[]Label{{GuessID: 4, ReductionRatio: 0.5, WorstCaseSize: 1}},
+		[]Label{{GuessID: 3, ReductionRatio: 0.5, WorstCaseSize: 1}},
 		"test",
 	)
 	if err != nil {
 		t.Fatalf("new record: %v", err)
 	}
+	if wordBytesString(record.SolutionWord) != "CCCCC" {
+		t.Fatalf("solution word = %q, want CCCCC", wordBytesString(record.SolutionWord))
+	}
 
 	if record.TurnDepth != 1 {
 		t.Fatalf("turn depth = %d, want 1", record.TurnDepth)
 	}
-	if record.PreviousGuessIDs[0] != 3 {
-		t.Fatalf("first previous guess = %d, want 3", record.PreviousGuessIDs[0])
+	if wordBytesString(record.PreviousGuessWords[0]) != "BBBBB" {
+		t.Fatalf("first previous guess = %q, want BBBBB", wordBytesString(record.PreviousGuessWords[0]))
 	}
-	if record.PreviousGuessIDs[1] != PaddingGuessID {
-		t.Fatalf("unused previous guess = %d, want padding", record.PreviousGuessIDs[1])
+	if wordBytesString(record.PreviousGuessWords[1]) != "" {
+		t.Fatalf("unused previous guess = %q, want padding", wordBytesString(record.PreviousGuessWords[1]))
 	}
 	if record.PreviousFeedback[1][0] != PaddingFeedbackValue {
 		t.Fatalf("unused feedback = %d, want padding", record.PreviousFeedback[1][0])
 	}
-	if record.TopKGuessIDs[0] != 4 {
-		t.Fatalf("first label guess = %d, want 4", record.TopKGuessIDs[0])
+	if wordBytesString(record.TopKGuessWords[0]) != "DDDDD" {
+		t.Fatalf("first label guess = %q, want DDDDD", wordBytesString(record.TopKGuessWords[0]))
 	}
-	if record.TopKGuessIDs[1] != PaddingGuessID {
-		t.Fatalf("unused label guess = %d, want padding", record.TopKGuessIDs[1])
+	if wordBytesString(record.TopKGuessWords[1]) != "" {
+		t.Fatalf("unused label guess = %q, want padding", wordBytesString(record.TopKGuessWords[1]))
 	}
 }

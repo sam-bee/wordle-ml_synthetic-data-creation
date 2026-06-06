@@ -13,7 +13,15 @@ import (
 func TestWriteBinaryFileUsesExpectedHeaderAndRecordSize(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "wordle-train.bin")
+	vocab, err := NewVocabulary(
+		[]words.Word{"AAAAA", "BBBBB", "CCCCC"},
+		[]words.Word{"AAAAA", "BBBBB"},
+	)
+	if err != nil {
+		t.Fatalf("new vocabulary: %v", err)
+	}
 	record, err := NewRecord(
+		vocab,
 		PaddingSolutionID,
 		nil,
 		[]uint16{0, 1},
@@ -49,6 +57,11 @@ func TestWriteBinaryFileUsesExpectedHeaderAndRecordSize(t *testing.T) {
 	assertUint32Field(t, fields, 16, 3, "guess_vocab_size")
 	assertUint32Field(t, fields, 20, 2, "solution_count")
 	assertUint32Field(t, fields, 24, uint32(SplitTrain), "split_id")
+
+	recordStart := HeaderSizeBytes
+	if got := string(data[recordStart : recordStart+WordLength]); got != "\x00\x00\x00\x00\x00" {
+		t.Fatalf("opening solution word bytes = %q, want zero padding", got)
+	}
 }
 
 func assertUint32Field(t *testing.T, fields []byte, offset int, want uint32, name string) {

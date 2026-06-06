@@ -69,14 +69,14 @@ func writeHeader(file *os.File, splitID SplitID, recordCount int, guessVocabSize
 }
 
 func writeRecord(file *os.File, record Record) error {
-	if err := binary.Write(file, binary.LittleEndian, record.SolutionID); err != nil {
+	if _, err := file.Write(record.SolutionWord[:]); err != nil {
 		return err
 	}
 	if err := binary.Write(file, binary.LittleEndian, record.TurnDepth); err != nil {
 		return err
 	}
-	for _, guessID := range record.PreviousGuessIDs {
-		if err := binary.Write(file, binary.LittleEndian, guessID); err != nil {
+	for _, guessWord := range record.PreviousGuessWords {
+		if _, err := file.Write(guessWord[:]); err != nil {
 			return err
 		}
 	}
@@ -90,8 +90,8 @@ func writeRecord(file *os.File, record Record) error {
 	if err := binary.Write(file, binary.LittleEndian, record.ShortlistSizeBefore); err != nil {
 		return err
 	}
-	for _, guessID := range record.TopKGuessIDs {
-		if err := binary.Write(file, binary.LittleEndian, guessID); err != nil {
+	for _, guessWord := range record.TopKGuessWords {
+		if _, err := file.Write(guessWord[:]); err != nil {
 			return err
 		}
 	}
@@ -125,8 +125,8 @@ type Metadata struct {
 	RecordsPerSolution        int      `json:"records_per_solution"`
 	RecordsPerDepth           int      `json:"records_per_depth"`
 	IncludesOpeningState      bool     `json:"includes_opening_state"`
-	OpeningSolutionID         uint16   `json:"opening_solution_id"`
-	PaddingGuessID            uint16   `json:"padding_guess_id"`
+	OpeningSolutionWord       string   `json:"opening_solution_word"`
+	PaddingWord               string   `json:"padding_word"`
 	PaddingFeedbackValue      uint8    `json:"padding_feedback_value"`
 	WordlistHash              string   `json:"wordlist_hash"`
 	GeneratorCommit           string   `json:"generator_commit"`
@@ -135,8 +135,7 @@ type Metadata struct {
 	Seed                      int64    `json:"seed"`
 	TeacherName               string   `json:"teacher_name"`
 	ScoreMeaning              string   `json:"score_meaning"`
-	GuessIDConvention         string   `json:"guess_id_convention"`
-	SolutionIDConvention      string   `json:"solution_id_convention"`
+	WordEncoding              string   `json:"word_encoding"`
 	FeedbackConvention        string   `json:"feedback_convention"`
 }
 
@@ -163,8 +162,8 @@ func NewMetadata(split Split, binaryPath string, records []Record, vocab *Vocabu
 		RecordsPerSolution:        config.RecordsPerDepth * config.MaxDepth,
 		RecordsPerDepth:           config.RecordsPerDepth,
 		IncludesOpeningState:      split.ID == SplitTrain && config.IncludeOpening,
-		OpeningSolutionID:         PaddingSolutionID,
-		PaddingGuessID:            PaddingGuessID,
+		OpeningSolutionWord:       "",
+		PaddingWord:               "",
 		PaddingFeedbackValue:      PaddingFeedbackValue,
 		WordlistHash:              wordlistHash,
 		GeneratorCommit:           generatorCommit,
@@ -173,8 +172,7 @@ func NewMetadata(split Split, binaryPath string, records []Record, vocab *Vocabu
 		Seed:                      config.Seed,
 		TeacherName:               "worst_case_shortlist_reduction",
 		ScoreMeaning:              "Per-state worst-case shortlist reduction ratio. Higher is better. Not globally comparable across states.",
-		GuessIDConvention:         "zero-based index in the external valid-guesses CSV; 65535 pads unused slots",
-		SolutionIDConvention:      "zero-based index in the external valid-solutions CSV; 65535 marks the global opening-state record",
+		WordEncoding:              "Word fields are fixed-width 5-byte uppercase ASCII strings; all-zero bytes pad unused word fields and the global opening-state solution.",
 		FeedbackConvention:        "0 grey/absent, 1 yellow/present wrong position, 2 green/correct position, 255 pads unused feedback slots",
 	}
 }

@@ -15,11 +15,11 @@ sidecar so a produced dataset can be traced back to the exact vocabulary.
 
 Each solution word produces five records at each depth from 1 to 5. The training
 file also includes one global opening-state record with no hidden solution. That
-record uses `65535` as the solution ID sentinel.
+record stores an empty padded solution word.
 
-Unused previous-guess slots use guess ID `65535`. Unused feedback slots use
-feedback value `255`. Real feedback values are `0` for grey, `1` for yellow, and
-`2` for green.
+Word fields are fixed-width five-byte uppercase ASCII strings. Unused word slots
+are padded with zero bytes. Unused feedback slots use feedback value `255`. Real
+feedback values are `0` for grey, `1` for yellow, and `2` for green.
 
 ## State Generation
 

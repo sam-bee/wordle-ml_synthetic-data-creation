@@ -2,21 +2,21 @@ package dataset
 
 const (
 	FormatMagic   = "WDIT"
-	FormatVersion = 1
+	FormatVersion = 2
 
-	FixedTopK = 16
-	MaxDepth  = 5
+	FixedTopK  = 16
+	MaxDepth   = 5
+	WordLength = 5
 
 	FeedbackGrey   uint8 = 0
 	FeedbackYellow uint8 = 1
 	FeedbackGreen  uint8 = 2
 
-	PaddingGuessID       uint16 = 0xffff
 	PaddingSolutionID    uint16 = 0xffff
 	PaddingFeedbackValue uint8  = 0xff
 
 	HeaderSizeBytes = 64
-	RecordSizeBytes = 168
+	RecordSizeBytes = 234
 )
 
 type SplitID uint32

@@ -97,7 +97,7 @@ func Generate(ctx context.Context, config Config) (Result, error) {
 
 	recordsBySplit := make(map[SplitID][]Record, len(splits))
 	if config.IncludeOpening {
-		openingRecord, err := NewRecord(PaddingSolutionID, nil, allSolutions, openingLabels, "opening")
+		openingRecord, err := NewRecord(vocab, PaddingSolutionID, nil, allSolutions, openingLabels, "opening")
 		if err != nil {
 			return Result{}, fmt.Errorf("build opening record: %w", err)
 		}
@@ -356,7 +356,7 @@ func (g *solutionGenerator) addRecord(history []Turn, shortlist []uint16, labels
 		return nil
 	}
 
-	record, err := NewRecord(g.solution, history, shortlist, labels, source)
+	record, err := NewRecord(g.vocab, g.solution, history, shortlist, labels, source)
 	if err != nil {
 		return err
 	}
@@ -390,14 +390,14 @@ func allSolutionIDs(solutionCount int) []uint16 {
 
 func sortRecords(records []Record) {
 	sort.Slice(records, func(i, j int) bool {
-		if records[i].SolutionID == PaddingSolutionID && records[j].SolutionID != PaddingSolutionID {
+		if records[i].solutionID == PaddingSolutionID && records[j].solutionID != PaddingSolutionID {
 			return true
 		}
-		if records[i].SolutionID != PaddingSolutionID && records[j].SolutionID == PaddingSolutionID {
+		if records[i].solutionID != PaddingSolutionID && records[j].solutionID == PaddingSolutionID {
 			return false
 		}
-		if records[i].SolutionID != records[j].SolutionID {
-			return records[i].SolutionID < records[j].SolutionID
+		if records[i].solutionID != records[j].solutionID {
+			return records[i].solutionID < records[j].solutionID
 		}
 		if records[i].TurnDepth != records[j].TurnDepth {
 			return records[i].TurnDepth < records[j].TurnDepth

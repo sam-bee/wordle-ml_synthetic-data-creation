@@ -130,7 +130,7 @@ top_k = 16
 For each top-k guess, store:
 
 ```text
-guess word ID
+guess word
 worst-case shortlist reduction ratio
 worst-case shortlist size after the guess
 ```
@@ -214,21 +214,24 @@ The header should be explicit and versioned so future dataset formats can be det
 
 ## Record Structure
 
-Suggested fixed-width record:
+Current fixed-width record:
 
 ```text
-solution_id:                    uint16
+solution_word[5]:               bytes
 turn_depth:                     uint8
 
-previous_guess_ids[5]:          uint16
+previous_guess_words[5][5]:     bytes
 previous_feedback[5][5]:        uint8
 
 shortlist_size_before:          uint16
 
-top_k_guess_ids[16]:            uint16
+top_k_guess_words[16][5]:       bytes
 top_k_reduction_ratios[16]:     float32
 top_k_worst_case_sizes[16]:     uint16
 ```
+
+Word fields are fixed-width uppercase ASCII. Unused word fields and the global
+opening-state solution word are padded with zero bytes.
 
 Feedback values should use a small enum:
 
@@ -243,8 +246,8 @@ Unused previous-turn slots should be padded consistently.
 For example, a depth-2 state uses:
 
 ```text
-previous_guess_ids[0]
-previous_guess_ids[1]
+previous_guess_words[0]
+previous_guess_words[1]
 previous_feedback[0]
 previous_feedback[1]
 ```
