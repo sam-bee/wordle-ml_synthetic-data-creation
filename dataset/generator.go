@@ -52,21 +52,12 @@ func Generate(ctx context.Context, config Config) (Result, error) {
 		return Result{}, fmt.Errorf("create output directory %q: %w", config.OutputDir, err)
 	}
 
-	validGuesses, err := words.GetValidGuesses()
-	if err != nil {
-		return Result{}, fmt.Errorf("load valid guesses: %w", err)
-	}
-	validSolutions, err := words.GetValidSolutions()
-	if err != nil {
-		return Result{}, fmt.Errorf("load valid solutions: %w", err)
-	}
-
-	vocab, err := NewVocabulary(validGuesses, validSolutions)
+	vocab, err := loadVocabulary()
 	if err != nil {
 		return Result{}, err
 	}
 
-	progress(config, "loaded %d valid guesses and %d valid solutions\n", len(vocab.Guesses), len(vocab.Solutions))
+	progress(config, "loaded %d action-space guesses and %d valid solutions\n", len(vocab.Guesses), len(vocab.Solutions))
 	progress(config, "precomputing feedback matrix...\n")
 
 	matrix, err := NewFeedbackMatrix(vocab)
@@ -144,6 +135,19 @@ func Generate(ctx context.Context, config Config) (Result, error) {
 	}
 
 	return result, nil
+}
+
+func loadVocabulary() (*Vocabulary, error) {
+	actionSpace, err := words.GetActionSpace()
+	if err != nil {
+		return nil, fmt.Errorf("load action space: %w", err)
+	}
+	validSolutions, err := words.GetValidSolutions()
+	if err != nil {
+		return nil, fmt.Errorf("load valid solutions: %w", err)
+	}
+
+	return NewVocabulary(actionSpace, validSolutions)
 }
 
 func (config Config) validate() error {
@@ -418,7 +422,7 @@ func solutionSeed(seed int64, solutionID uint16) int64 {
 
 func hashWordlists() string {
 	hasher := sha256.New()
-	_, _ = hasher.Write([]byte(wordlists.ValidGuessesCSV()))
+	_, _ = hasher.Write([]byte(wordlists.ActionSpaceCSV()))
 	_, _ = hasher.Write([]byte("\n---solutions---\n"))
 	_, _ = hasher.Write([]byte(wordlists.ValidSolutionsCSV()))
 	return hex.EncodeToString(hasher.Sum(nil))

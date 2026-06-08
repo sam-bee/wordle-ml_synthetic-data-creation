@@ -10,11 +10,11 @@ import (
 
 type Player struct {
 	solutionShortlist []words.Word
-	validGuesses      []words.Word
+	actionSpace       []words.Word
 }
 
-func NewPlayer(validSolutions []words.Word, validGuesses []words.Word) Player {
-	return Player{solutionShortlist: validSolutions, validGuesses: validGuesses}
+func NewPlayer(validSolutions []words.Word, actionSpace []words.Word) Player {
+	return Player{solutionShortlist: validSolutions, actionSpace: actionSpace}
 }
 
 func (player *Player) GetNextGuess(lastTurn bool) (words.Word, GuessEvaluation) {
@@ -23,7 +23,7 @@ func (player *Player) GetNextGuess(lastTurn bool) (words.Word, GuessEvaluation) 
 		return player.solutionShortlist[0], GuessEvaluation{Guess: player.solutionShortlist[0]}
 	}
 
-	bestGuess := player.identifyBestPossibleGuess(player.validGuesses)
+	bestGuess := player.identifyBestPossibleGuess(player.actionSpace)
 
 	return bestGuess.Guess, bestGuess
 }
@@ -96,10 +96,10 @@ func (p *Player) evaluateGuesses(fanoutChannel <-chan words.Word) <-chan GuessEv
 	return faninChannel
 }
 
-func (player *Player) identifyBestPossibleGuess(validGuesses []words.Word) GuessEvaluation {
+func (player *Player) identifyBestPossibleGuess(actionSpace []words.Word) GuessEvaluation {
 
 	// To fan out the guesses to the workers, create a fan out channel
-	fanoutChannel := fanoutGuessEvaluation(validGuesses)
+	fanoutChannel := fanoutGuessEvaluation(actionSpace)
 
 	// To collate the results from the workers, create one fan in channel per worker
 	noOfWorkers := max(runtime.NumCPU()-1, 1)

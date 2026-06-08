@@ -3,8 +3,8 @@ module wordle
 go 1.26
 
 require (
-	github.com/sam-bee/wordle-ml_game-engine v0.1.0
-	github.com/sam-bee/wordle-ml_wordlists v0.2.0
+	github.com/sam-bee/wordle-ml_game-engine v1.0.0
+	github.com/sam-bee/wordle-ml_wordlists v1.1.0
 	github.com/spf13/cobra v1.7.0
 )
 
