@@ -25,6 +25,7 @@ const (
 	SplitTrain SplitID = iota + 1
 	SplitValidation
 	SplitTest
+	SplitMini
 )
 
 func (s SplitID) String() string {
@@ -35,6 +36,8 @@ func (s SplitID) String() string {
 		return "validation"
 	case SplitTest:
 		return "test"
+	case SplitMini:
+		return "mini"
 	default:
 		return "unknown"
 	}
@@ -48,6 +51,8 @@ func (s SplitID) FileStem() string {
 		return "wordle-validation"
 	case SplitTest:
 		return "wordle-test"
+	case SplitMini:
+		return "wordle-mini"
 	default:
 		return "wordle-unknown"
 	}

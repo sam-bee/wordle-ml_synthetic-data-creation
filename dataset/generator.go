@@ -74,8 +74,13 @@ func Generate(ctx context.Context, config Config) (Result, error) {
 
 	splits := splitSolutions(len(vocab.Solutions), config.Seed)
 	splitIndex := make(map[uint16]SplitID, len(vocab.Solutions))
+	miniIndex := make(map[uint16]bool, miniSolutionCount)
 	for _, split := range splits {
 		for _, solutionID := range split.SolutionIDs {
+			if split.ID == SplitMini {
+				miniIndex[solutionID] = true
+				continue
+			}
 			splitIndex[solutionID] = split.ID
 		}
 	}
@@ -98,6 +103,9 @@ func Generate(ctx context.Context, config Config) (Result, error) {
 	for _, solutionRecord := range solutionRecords {
 		splitID := splitIndex[solutionRecord.SolutionID]
 		recordsBySplit[splitID] = append(recordsBySplit[splitID], solutionRecord.Records...)
+		if miniIndex[solutionRecord.SolutionID] {
+			recordsBySplit[SplitMini] = append(recordsBySplit[SplitMini], solutionRecord.Records...)
+		}
 	}
 
 	wordlistHash := hashWordlists()

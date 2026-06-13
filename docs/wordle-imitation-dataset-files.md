@@ -1,15 +1,16 @@
 # Wordle Imitation Learning Dataset Files
 
-This document describes the proposed training, validation, and testing dataset files for the Wordle imitation learning project.
+This document describes the proposed training, mini, validation, and testing dataset files for the Wordle imitation learning project.
 
 The purpose of these files is to train a neural policy model to imitate an existing Go Wordle player. The Go player acts as the teacher: given an incomplete Wordle state, it ranks legal next guesses according to worst-case shortlist reduction.
 
 ## File Set
 
-The dataset should be split into three binary files:
+The dataset should be split into four binary files:
 
 ```text
 wordle-train.bin
+wordle-mini.bin
 wordle-validation.bin
 wordle-test.bin
 ```
@@ -18,6 +19,7 @@ Each binary file should have a matching JSON metadata file with the same basenam
 
 ```text
 wordle-train.json
+wordle-mini.json
 wordle-validation.json
 wordle-test.json
 ```
@@ -39,6 +41,8 @@ training:    80% of valid solution words
 validation:  10% of valid solution words
 test:        10% of valid solution words
 ```
+
+The `mini` file is a deterministic 64-solution subset of the training split, intended for small training runs and pipeline checks.
 
 This gives a cleaner measure of whether the model generalises to unseen Wordle solutions.
 
@@ -175,6 +179,7 @@ Under an 80/10/10 split, approximate record counts are:
 
 ```text
 training:    ~50,000 solution-specific records
+mini:        1,600 solution-specific records
 validation:  ~6,250 solution-specific records
 test:        ~6,250 solution-specific records
 ```
@@ -206,7 +211,7 @@ top_k:             uint32
 max_turns:         uint32
 guess_vocab_size:  uint32
 solution_count:    uint32
-split_id:          uint32   // train, validation, or test
+split_id:          uint32   // train, mini, validation, or test
 reserved:          bytes
 ```
 

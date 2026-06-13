@@ -11,5 +11,6 @@ data:
 
 human-readable:
 	go run . human-readable data/wordle-train.bin
+	go run . human-readable data/wordle-mini.bin
 	go run . human-readable data/wordle-validation.bin
 	go run . human-readable data/wordle-test.bin

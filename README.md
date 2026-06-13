@@ -5,7 +5,7 @@ learning data.
 
 The generator uses the Wordle ML game engine and wordlists modules to create
 incomplete game states, ask the teacher policy to rank legal next guesses, and
-write training, validation, and test files under `data/`.
+write training, mini, validation, and test files under `data/`.
 
 Generate the dataset with:
 

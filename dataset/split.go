@@ -7,6 +7,8 @@ type Split struct {
 	SolutionIDs []uint16
 }
 
+const miniSolutionCount = 64
+
 func splitSolutions(solutionCount int, seed int64) []Split {
 	rng := rand.New(rand.NewSource(seed))
 	permutation := rng.Perm(solutionCount)
@@ -30,6 +32,10 @@ func splitSolutions(solutionCount int, seed int64) []Split {
 			splits[2].SolutionIDs = append(splits[2].SolutionIDs, uint16(solutionID))
 		}
 	}
+
+	miniCount := min(miniSolutionCount, len(splits[0].SolutionIDs))
+	miniSolutionIDs := append([]uint16(nil), splits[0].SolutionIDs[:miniCount]...)
+	splits = append(splits, Split{ID: SplitMini, SolutionIDs: miniSolutionIDs})
 
 	return splits
 }
